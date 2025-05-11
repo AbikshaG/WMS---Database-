@@ -1,0 +1,95 @@
+CREATE TABLE Roles (
+    RoleID INT PRIMARY KEY AUTO_INCREMENT,
+    RoleName VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Users (
+    UserID INT PRIMARY KEY AUTO_INCREMENT,
+    Username VARCHAR(50) UNIQUE NOT NULL,
+    PasswordHash VARCHAR(255) NOT NULL,
+    RoleID INT,
+    FOREIGN KEY (RoleID) REFERENCES Roles(RoleID)
+);
+
+CREATE TABLE Warehouses ( 
+    WarehouseID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Address TEXT
+);
+
+CREATE TABLE Locations (
+    LocationID INT PRIMARY KEY AUTO_INCREMENT,
+    WarehouseID INT,
+    Code VARCHAR(50) NOT NULL,
+    Description TEXT,
+    FOREIGN KEY (WarehouseID) REFERENCES Warehouses(WarehouseID)
+);
+
+CREATE TABLE Items (
+    ItemID INT PRIMARY KEY AUTO_INCREMENT,
+    SKU VARCHAR(100) UNIQUE NOT NULL,
+    Name VARCHAR(100),
+    Description TEXT,
+    Unit VARCHAR(20)
+);
+
+CREATE TABLE Inventory (
+    InventoryID INT PRIMARY KEY AUTO_INCREMENT,
+    ItemID INT,
+    LocationID INT,
+    Quantity INT NOT NULL,
+    FOREIGN KEY (ItemID) REFERENCES Items(ItemID),
+    FOREIGN KEY (LocationID) REFERENCES Locations(LocationID)
+);
+
+CREATE TABLE Suppliers (
+    SupplierID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100),
+    ContactInfo TEXT
+);
+
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100),
+    Address TEXT,
+    ContactInfo TEXT
+);
+
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT,
+    OrderDate DATE,
+    Status VARCHAR(20),
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+CREATE TABLE OrderItems (
+    OrderItemID INT PRIMARY KEY AUTO_INCREMENT,
+    OrderID INT,
+    ItemID INT,
+    Quantity INT,
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY (ItemID) REFERENCES Items(ItemID)
+);
+
+CREATE TABLE Shipments (
+    ShipmentID INT PRIMARY KEY AUTO_INCREMENT,
+    OrderID INT,
+    ShippedDate DATE,
+    Carrier VARCHAR(100),
+    TrackingNumber VARCHAR(100),
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
+);
+
+
+CREATE TABLE Receipts (
+    ReceiptID INT PRIMARY KEY AUTO_INCREMENT,
+    SupplierID INT,
+    ItemID INT,
+    Quantity INT,
+    ReceivedDate DATE,
+    WarehouseID INT,
+    FOREIGN KEY (SupplierID) REFERENCES Suppliers(SupplierID),
+    FOREIGN KEY (ItemID) REFERENCES Items(ItemID),
+    FOREIGN KEY (WarehouseID) REFERENCES Warehouses(WarehouseID)
+);
